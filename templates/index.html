@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Welcome to our app
+{% endblock %}
+
+{% block body %}
+
+<h1>Chat with millions of people!</h1>
+    <form action="{{ url_for('channels') }}" method="post">
+        <input type="text" name="username" placeholder="Set a username" minlength="3">
+        <input type="submit" value="Set username">
+    </form>
+    <small>This username will be used to recognize you!</small>
+{% endblock %}

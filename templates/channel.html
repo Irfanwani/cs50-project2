@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Channel details
+{% endblock %}
+
+{% block body %}
+    <h1>Here are the channel details</h1>
+    <h4>users in this  channel:</h4>
+    <ul>
+        {% for user in users %}
+            <li>{{ user }}</li>
+        {% else %}
+        <strong>No user joined in this channel.</strong>
+        {% endfor %}
+    </ul>
+    <form action="{{ url_for('chat1', channel_id=chnls.index(chnl))}}">
+    <button name="btn" id="join_btn">Join this channel</button>
+    </form>
+{% endblock %}

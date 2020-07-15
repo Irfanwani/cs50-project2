@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Create or join a channel
+{% endblock %}
+
+{% block body %}
+    
+    <h1>Create a channel here!</h1>
+    <form action="{{ url_for('chat') }}" method="post">
+        <input type="text" name="channel" placeholder="Set channel name" min-length="3">
+        <input type="submit" value="Create channel">
+    </form>
+
+    <h3>Or join an existing one!</h3>
+    <ul>
+        {% for chnl in chnls %}
+            <li><a href="{{ url_for('channel', channel_id=chnls.index(chnl))}}">{{ chnl }}</a></li>
+        {% else %}
+            <strong>Sorry! no channel to join.</strong>
+        {% endfor %}
+    </ul>
+    <hr>
+    <h4>{{ username }}</h4>
+    <a href="{{ url_for('logout')}}">Logout</a>
+    <small>  (Warning! All the details will be permanently deleted.)</small>
+{% endblock %}
