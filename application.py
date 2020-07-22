@@ -2,7 +2,7 @@ import os
 import requests
 
 from flask import Flask, render_template, jsonify, request, flash, session, redirect, url_for
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__, template_folder="templates")
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -24,7 +24,7 @@ def index():
         flash(f"Already logged in as {session['username']}", "info")
         return redirect(url_for("channels"))
     if request.method == "POST":
-        if username == user:
+        if username in users_list:
             flash("Username already taken!", "info")
             return render_template("index.html")
         if len(username) < 3 or username is None:
@@ -67,26 +67,31 @@ def channel(channel_id):
 
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
-    channel = request.form.get("channel")
-    if "channel" in session:
-        flash(f"You are already joined in {session['channel']} channel.", "info")
-        return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]])
-    if request.method == "POST":
-        if channel in channels_list:
-            flash("channel name already taken.", "info")
-            return render_template("channels.html", username=session['username'], chnls=channels_list)
-        if len(channel) < 3 or channel is None:
-            flash("Channel name should be 3 characters or more", "info")
+    if "username" in session:
+        channel = request.form.get("channel")
+        if "channel" in session:
+            flash(f"You are already joined in {session['channel']} channel.", "info")
+            return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]])
+        if request.method == "POST":
+            if channel in channels_list:
+                flash("channel name already taken.", "info")
+                return render_template("channels.html", username=session['username'], chnls=channels_list)
+            if len(channel) < 3 or channel is None:
+                flash("Channel name should be 3 characters or more", "info")
+                return render_template("channels.html", username=session["username"], chnls=channels_list)
+            session["channel"] = channel
+            channels_list.append(channel)
+            message_list[session["channel"]] = []
+            channel_joined[session["channel"]] = [session["username"]]
+            message_list[session['channel']].insert(0, f"{session['username']} created {session['channel']} channel!")
+            flash(f"{session['channel']} created as a new channel!", "info")
+            return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]])
+        else:
+            flash("Please join or create a channel to start chatting.", "info")
             return render_template("channels.html", username=session["username"], chnls=channels_list)
-        session["channel"] = channel
-        channels_list.append(channel)
-        message_list[session["channel"]] = []
-        channel_joined[session["channel"]] = [session["username"]]
-        flash(f"{session['channel']} created as a new channel!", "info")
-        return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]])
     else:
-        flash("Please join or create a channel to start chatting.", "info")
-        return render_template("channels.html", username=session["username"], chnls=channels_list)
+        flash("Please login first.", "info")
+        return redirect(url_for("index"))
 
 
 @app.route("/chat1/<int:channel_id>")
@@ -112,6 +117,9 @@ def logout():
     if "username" in session:
         if usr in users_list:
             users_list.remove(usr)
+        if "channel" in session:
+            channel_joined[session["channel"]].remove(session["username"])
+            session.pop("channel", None)
         session.pop("username", None)
         flash("Logged out successfully.", 'info')
         return redirect(url_for("index"))
@@ -136,13 +144,40 @@ def leavechannel():
         return redirect(url_for(index))
 
 
+@socketio.on('joined')
+def  joined():
+    room = session["channel"]
+    join_room(room)
+    msg1 = f"{session['username']} created {session['channel']} channel!"
+    msg2 = f"{session['username']} left the channel."
+    msg = f"{session['username']} joined the channel!"
+    if message_list[session["channel"]].count(msg) != message_list[session["channel"]].count(msg2):
+        msg = ''
+    if msg != '':
+        message_list[session["channel"]].insert(0, msg)
+        emit("join msg", {'msg': msg}, room=room)
+
+
+@socketio.on("left")
+def left():
+    room = session["channel"]
+    leave_room(room)
+    msg = f"{session['username']} left the channel."
+    message_list[session["channel"]].insert(0, msg)
+    emit("channel left", {'msg': msg}, room=room)
+
+
 @socketio.on('send message')
 def chatting(data):
     message = data['message']
     timestamp = data['timestamp']
     user = session["username"]
-    message_list[session["channel"]].insert(0, f"{timestamp}- {user}:  {message} ")
+    room = session['channel']
+    if message != '':
+        message_list[session["channel"]].insert(0, f"{timestamp}- {user}:  {message}")
+    
+    # Deleting older messages 
     if len(message_list[session["channel"]]) > 100:
         message_list[session["channel"]].pop()
         
-    emit('show message', {"message": message, 'user': user, 'timestamp': timestamp}, broadcast=True)
+    emit('show message', {"message": message, 'user': user, 'timestamp': timestamp}, room=room)

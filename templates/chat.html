@@ -8,9 +8,10 @@
     <h1>You can now start chatting here!</h1>
     <form id="snd">
         <input type="text" placeholder="Type your messages" id="msg" name="msg">
-        <button>Send</button>
+        <input type="submit" value="Send">
     </form>
 
+    
     <br>
     
     <div>
@@ -21,10 +22,10 @@
             <li>{{ msg }}</li>
         {% endfor %}
     </ul>
-
+    
     <hr>
     <div><strong>{{ username }}</strong></div>
-    <a href="{{ url_for('leavechannel') }}">Leave channel</a>
+    <a href="{{ url_for('leavechannel') }}" id="leave">Leave channel</a>
     <small> (Warning: All messages and other details linked with this channel from you will be deleted permanently)</small>
 
     <br>
