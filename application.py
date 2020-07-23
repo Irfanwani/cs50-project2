@@ -57,12 +57,14 @@ def channels():
 
 @app.route("/channels/<int:channel_id>")
 def channel(channel_id):
-    chnl = channels_list[channel_id]
-    if chnl is None:
-        flash("No such channel", "info")
-        return render_template("channels.html", username=session["username"], chnls=channels_list)
-    return render_template("channel.html", users=channel_joined[chnl], chnl=chnl, chnls=channels_list, username=session["username"])
-    
+    if "username" in session:
+        chnl = channels_list[channel_id]
+        if chnl is None:
+            flash("No such channel", "info")
+            return render_template("channels.html", username=session["username"], chnls=channels_list)
+        return render_template("channel.html", users=channel_joined[chnl], chnl=chnl, chnls=channels_list, username=session["username"])
+    else:
+        return redirect(url_for("index"))        
 
 
 @app.route("/chat", methods=["GET", "POST"])
@@ -70,7 +72,6 @@ def chat():
     if "username" in session:
         channel = request.form.get("channel")
         if "channel" in session:
-            flash(f"You are already joined in {session['channel']} channel.", "info")
             return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]], channel=session["channel"])
         if request.method == "POST":
             if channel in channels_list:
@@ -101,6 +102,7 @@ def chat1(channel_id):
 
         # Allowing a user to join only a single channel
         if "channel" in session:
+            flash(f"You are already joined in {session['channel']} channel.", "info")
             return redirect(url_for("chat"))
         session["channel"] = chnl
         channel_joined[chnl].append(session["username"])
@@ -137,7 +139,6 @@ def leavechannel():
             flash("You left the channel", "info")
             return redirect(url_for("chat"))
         else:
-            flash("You are not joined in any channel.", "info")
             return redirect(url_for('chat'))
     else:
         flash("you are not logged in.", "info")
