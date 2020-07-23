@@ -113,8 +113,8 @@ def chat1(channel_id):
 
 @app.route('/logout')
 def logout():
-    usr = session['username']
     if "username" in session:
+        usr = session['username']
         if usr in users_list:
             users_list.remove(usr)
         if "channel" in session:
@@ -181,3 +181,4 @@ def chatting(data):
         message_list[session["channel"]].pop()
         
     emit('show message', {"message": message, 'user': user, 'timestamp': timestamp}, room=room)
+
