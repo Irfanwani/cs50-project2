@@ -5,16 +5,29 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Here are the channel details</h1>
+    <nav class="navbar navbar-light bg-light">
+        <img src="../static/icon.png" width="50" height="50">
+        <div class="left-side">
+            <div>
+                <h4 class="username">{{ username }}</h4>
+            </div>
+            <div>
+                <a href="{{ url_for('logout')}}" class="logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <br>
+    <h1 class="h3 mb-3 font-weight-normal">Here are the channel details</h1>
     <h4>users in this  channel:</h4>
-    <ul>
+    <ul class="list-group">
         {% for user in users %}
-            <li>{{ user }}</li>
+            <li class="list-group-item">{{ user }}</li>
         {% else %}
-        <strong>No user joined in this channel.</strong>
+        <small>No user joined in this channel.</small>
         {% endfor %}
     </ul>
+    <br>
     <form action="{{ url_for('chat1', channel_id=chnls.index(chnl))}}">
-    <button name="btn" id="join channel">Join this channel</button>
+    <button name="btn" id="join channel" class="btn btn-primary">Join this channel</button>
     </form>
 {% endblock %}

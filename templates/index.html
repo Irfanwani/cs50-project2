@@ -5,11 +5,15 @@
 {% endblock %}
 
 {% block body %}
-
-<h1>Chat with millions of people!</h1>
-    <form action="{{ url_for('channels') }}" method="post">
-        <input type="text" name="username" placeholder="Set a username" minlength="3">
-        <input type="submit" value="Set username">
+    <div class="logo"><img src="../static/icon.png" width="50" height="50"></div>
+    <br>
+    <form action="{{ url_for('channels') }}" method="post" class="form-signin">
+        <h1 class="h3 mb-3 font-weight-normal">Chat with millions of people!</h1>
+    
+        <input type="text" name="username" placeholder="Set a username" minlength="3" class="form-control">
+        <small class="form-text text-muted">This username will be used to recognize you!</small>
+        <br>
+        <input type="submit" value="Set username" class="btn btn-primary">
     </form>
-    <small>This username will be used to recognize you!</small>
+
 {% endblock %}

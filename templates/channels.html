@@ -5,23 +5,32 @@
 {% endblock %}
 
 {% block body %}
-    
-    <h1>Create a channel here!</h1>
-    <form id="create channel" action="{{ url_for('chat') }}" method="post">
-        <input type="text" name="channel" placeholder="Set channel name" min-length="3">
-        <input type="submit" value="Create channel">
+    <nav class="navbar navbar-light bg-light">
+        <img src="../static/icon.png" width="50" height="50">
+        <div class="left-side">
+            <div>
+                <h4 class="username">{{ username }}</h4>
+            </div>
+            <div>
+                <a href="{{ url_for('logout')}}" class="logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <br>
+    <h1 class="h3 mb-3 font-weight-normal">Create a channel here!</h1>
+    <form id="create channel" action="{{ url_for('chat') }}" method="post" class="form-signin">
+        <input type="text" name="channel" placeholder="Set channel name" min-length="3" class="form-control">
+        <small class="form-text text-muted">Pleople in a particular channel can see that channel messages.</small>
+        <br>
+        <input type="submit" value="Create channel" class="btn btn-primary btn-lg">
     </form>
-
-    <h3>Or join an existing one!</h3>
+    <br>
+    <h3 class="h3 mb-3 font-weight-normal">Or join an existing one!</h3>
     <ul>
         {% for chnl in chnls %}
-            <li><a href="{{ url_for('channel', channel_id=chnls.index(chnl))}}">{{ chnl }}</a></li>
+            <li class="list-group"><a href="{{ url_for('channel', channel_id=chnls.index(chnl))}}" class="list-group-item list-group-item-action">{{ chnl }}</a></li>
         {% else %}
-            <strong>Sorry! no channel to join.</strong>
+            <small>Sorry! no channel to join.</small>
         {% endfor %}
     </ul>
-    <hr>
-    <h4>{{ username }}</h4>
-    <a href="{{ url_for('logout')}}">Logout</a>
-    <small>  (Warning! All the details will be permanently deleted.)</small>
 {% endblock %}

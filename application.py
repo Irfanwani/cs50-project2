@@ -61,7 +61,7 @@ def channel(channel_id):
     if chnl is None:
         flash("No such channel", "info")
         return render_template("channels.html", username=session["username"], chnls=channels_list)
-    return render_template("channel.html", users=channel_joined[chnl], chnl=chnl, chnls=channels_list)
+    return render_template("channel.html", users=channel_joined[chnl], chnl=chnl, chnls=channels_list, username=session["username"])
     
 
 
@@ -71,7 +71,7 @@ def chat():
         channel = request.form.get("channel")
         if "channel" in session:
             flash(f"You are already joined in {session['channel']} channel.", "info")
-            return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]])
+            return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]], channel=session["channel"])
         if request.method == "POST":
             if channel in channels_list:
                 flash("channel name already taken.", "info")
@@ -85,7 +85,7 @@ def chat():
             channel_joined[session["channel"]] = [session["username"]]
             message_list[session['channel']].insert(0, f"{session['username']} created {session['channel']} channel!")
             flash(f"{session['channel']} created as a new channel!", "info")
-            return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]])
+            return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]], channel=session["channel"])
         else:
             flash("Please join or create a channel to start chatting.", "info")
             return render_template("channels.html", username=session["username"], chnls=channels_list)
@@ -105,7 +105,7 @@ def chat1(channel_id):
         session["channel"] = chnl
         channel_joined[chnl].append(session["username"])
         flash(f"You joined the channel {session['channel']}", "info")
-        return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]])
+        return render_template("chat.html", username=session["username"], msgs=message_list[session["channel"]], channel=session["channel"])
     else:
         flash("You are not logged in.Please login first.", "info")
         return redirect(url_for("index"))
@@ -141,7 +141,7 @@ def leavechannel():
             return redirect(url_for('chat'))
     else:
         flash("you are not logged in.", "info")
-        return redirect(url_for(index))
+        return redirect(url_for("index"))
 
 
 @socketio.on('joined')

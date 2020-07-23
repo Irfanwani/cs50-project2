@@ -5,31 +5,40 @@
 {% endblock %}
 
 {% block body %}
-    <h1>You can now start chatting here!</h1>
-    <form id="snd">
-        <input type="text" placeholder="Type your messages" id="msg" name="msg">
-        <input type="submit" value="Send">
-    </form>
-
-    
-    <br>
+<nav class="navbar navbar-light bg-light">
+    <img src="../static/icon.png" width="50" height="50">
+    <div class="left-side">
+        <div>
+            <h4 class="username">{{ username }}</h4>
+        </div>
+        <div>
+            <a href="{{ url_for('logout')}}" class="logout">Logout</a>
+        </div>
+    </div>
+</nav>
+<br>
     
     <div>
-        <strong>Messages will pop up here. Happy chatting!</strong>
+        <strong class="h3 mb-3 font-weight-normal chnl-title">{{ channel }}</strong>
     </div>
-    <ul id="messages">
-        {% for msg in msgs %}
-            <li>{{ msg }}</li>
-        {% endfor %}
-    </ul>
-    
-    <hr>
-    <div><strong>{{ username }}</strong></div>
-    <a href="{{ url_for('leavechannel') }}" id="leave">Leave channel</a>
-    <small> (Warning: All messages and other details linked with this channel from you will be deleted permanently)</small>
-
     <br>
+    <div id="messages" class="list-group msgs overflow-auto" style="height: 300px;">
+        
+        {% for msg in msgs %}
+            <p class="mes">{{ msg }}</p>
+        {% endfor %}
+    </div>
+    <br>
+    <div class="send-msg fixed-bottom">
+        <div>
+        <form id="snd" class="form-group">
+            <input type="text" placeholder="Type your messages" id="msg" name="msg" class="form-control" size="auto">
+            <input type="submit" value="Send" class="btn btn-success">
+        </form>
+        </div>
+        <div class="lv">
+            <a href="{{ url_for('leavechannel') }}" id="leave" class="btn btn-warning">Leave channel</a>
+        </div>
+    </div>
 
-    <a href="{{ url_for('logout')}}">Logout</a>
-    <small>  (Warning! All the details will be permanently deleted.)</small>
 {% endblock %}

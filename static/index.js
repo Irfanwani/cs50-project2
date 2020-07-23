@@ -27,10 +27,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //Showing a message send 
     socket.on('show message', data => {
-        const li = document.createElement('li');
-        li.innerHTML = '<' + `${data.timestamp}` + '>-' + '[' + `${data.user}` + ']:____' + `${data.message}`;
+        const p = document.createElement('p');
+        p.className = 'mes';
+        p.innerHTML = '<' + `${data.timestamp}` + '>-' + '[' + `${data.user}` + ']: ' + `${data.message}`;
         let ul = document.querySelector("#messages");
-        document.querySelector("#messages").insertBefore(li, ul.childNodes[0]);
+        document.querySelector("#messages").insertBefore(p, ul.childNodes[0]);
 
         document.querySelector("#msg").value = '';
     });
@@ -40,8 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
         let timestamp = new Date;
         timestamp = timestamp.toLocaleTimeString();
 
-        const li = document.createElement('li');
+        const li = document.createElement('p');
         li.innerHTML ='<' + `${timestamp}` + '>' + `${data.msg}`;
+        li.className = "mes";
 
         let ul = document.querySelector("#messages");
         document.querySelector("#messages").insertBefore(li, ul.childNodes[0]);
@@ -52,8 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
         let timestamp = new Date;
         timestamp = timestamp.toLocaleTimeString();
 
-        const li = document.createElement('li');
+        const li = document.createElement('p');
         li.innerHTML ='<' + `${timestamp}` + '>' + `${data.msg}`;
+        li.className = 'mes';
 
         let ul = document.querySelector("#messages");
         document.querySelector("#messages").insertBefore(li, ul.childNodes[0]);
