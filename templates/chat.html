@@ -22,13 +22,13 @@
         <strong class="h3 mb-3 font-weight-normal chnl-title">{{ channel }}</strong>
     </div>
     <br>
-    <div id="messages" class="list-group msgs overflow-auto" style="height: 300px;">
+    <div id="messages" class="list-group msgs overflow-auto" style="height: 350px;">
         
         {% for msg in msgs %}
             <p class="mes">{{ msg }}</p>
         {% endfor %}
     </div>
-    <br>
+    
     <div class="send-msg fixed-bottom">
         <div>
         <form id="snd" class="form-group">
